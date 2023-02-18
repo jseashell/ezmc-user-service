@@ -46,6 +46,7 @@ const serverlessConfiguration: AWS = {
   package: {
     individually: true,
     patterns: [
+      'prisma/schema.prisma',
       // Reduce the footprint of Prisma binaries deployments
       '!node_modules/.prisma/client/libquery_engine-*',
       'node_modules/.prisma/client/libquery_engine-rhel-*',
