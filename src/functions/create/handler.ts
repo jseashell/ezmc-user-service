@@ -19,7 +19,10 @@ const create: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) 
   return prisma.user
     .create(data)
     .then((user) => {
-      return formatJsonResponse(user);
+      return formatJsonResponse({
+        message: 'Success',
+        data: user,
+      });
     })
     .catch((err) => {
       console.error(err);

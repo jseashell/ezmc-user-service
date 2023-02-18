@@ -12,7 +12,10 @@ const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event
       include: { profile: true },
     })
     .then((users) => {
-      return formatJsonResponse(users);
+      return formatJsonResponse({
+        message: 'Success',
+        data: users,
+      });
     })
     .catch((error) => {
       console.error(error);
