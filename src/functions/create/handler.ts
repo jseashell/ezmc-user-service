@@ -7,17 +7,17 @@ import schema from './schema';
 const prisma = new PrismaClient();
 
 const create: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) => {
-  const data = {
-    username: event.body.username,
-    email: event.body.email,
-    firstName: event.body.firstName,
-    lastName: event.body.lastName,
-    phoneNumber: event.body.phoneNumber,
-    locale: event.body.locale,
-  };
-
   return prisma.user
-    .create(data)
+    .create({
+      data: {
+        username: event.body.username,
+        email: event.body.email,
+        firstName: event.body.firstName,
+        lastName: event.body.lastName,
+        phoneNumber: event.body.phoneNumber,
+        locale: event.body.locale,
+      },
+    })
     .then((user) => {
       return formatJsonResponse({
         message: 'Success',

@@ -8,9 +8,7 @@ const prisma = new PrismaClient();
 
 const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event) => {
   return prisma.user
-    .findMany({
-      include: { profile: true },
-    })
+    .findMany()
     .then((users) => {
       return formatJsonResponse({
         message: 'Success',
