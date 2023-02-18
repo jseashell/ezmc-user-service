@@ -7,7 +7,7 @@ env:
   REGION: us-east-1
 
 jobs:
-  Deploy:
+  Pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Project
