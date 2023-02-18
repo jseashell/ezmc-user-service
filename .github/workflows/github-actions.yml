@@ -18,6 +18,8 @@ jobs:
           node-version-file: .nvmrc
       - name: Install project
         run: npm ci --silent
+      - name: Generate Prisma Database Client
+        run: npx prisma generate
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

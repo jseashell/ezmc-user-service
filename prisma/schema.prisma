@@ -1,5 +1,8 @@
 generator client {
-  provider      = "prisma-client-js"
+  provider = "prisma-client-js"
+
+  // This is necessary because the local runtime is different from the Lambda runtime. 
+  // Add the binaryTarget to make the compatible Prisma engine binary available.
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 

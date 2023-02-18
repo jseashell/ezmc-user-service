@@ -1,6 +1,6 @@
 # EZMC User Service
 
-User management service for the EZ Minecraft stack via RESTful API.
+User management service for the EZ Minecraft stack via RESTful API. Data is persisted with a PostgreSQL database hosted in AWS RDS.
 
 ## Install
 
@@ -20,10 +20,10 @@ First, setup your environment with the PostgreSQL database URL.
 export DB_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
 ```
 
-Next, generate the database client
+Next, generate the Prisma database client
 
 ```sh
-npm run prisma:generate
+npx prisma generate
 ```
 
 Emulate the AWS environment offline locally and request the API
@@ -70,6 +70,7 @@ The project code base is mainly located within the `src` folder.
 .
 ├── .github                # CI/CD config
 ├── .husky                 # Git hooks
+├── prisma                 # Prisma ORM client config
 ├── src
 │   ├── functions          # Lambda functions
 │   └── libs               # Shared code

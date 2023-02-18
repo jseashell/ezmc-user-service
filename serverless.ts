@@ -4,15 +4,7 @@ import type { AWS } from '@serverless/typescript';
 const serverlessConfiguration: AWS = {
   service: 'ezmc-user-service',
   frameworkVersion: '3',
-  plugins: ['serverless-offline', 'serverless-webpack', 'serverless-webpack-prisma'],
-  custom: {
-    webpack: {
-      includeModules: true,
-      packagerOptions: {
-        scripts: ['npm run prisma:generate'],
-      },
-    },
-  },
+  plugins: ['serverless-bundle', 'serverless-offline'],
   provider: {
     name: 'aws',
     runtime: 'nodejs18.x',
@@ -54,6 +46,7 @@ const serverlessConfiguration: AWS = {
   package: {
     individually: true,
     patterns: [
+      // Reduce the footprint of Prisma binaries deployments
       '!node_modules/.prisma/client/libquery_engine-*',
       'node_modules/.prisma/client/libquery_engine-rhel-*',
       '!node_modules/prisma/libquery_engine-*',
