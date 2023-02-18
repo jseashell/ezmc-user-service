@@ -43,6 +43,13 @@ curl localhost:3000/main/create \
   -d '{"username": "test", "email": "test@example.com"}'
 ```
 
+## API
+
+|Endpoint|Method|Description|Request|Response|
+|--------|------|-----------|-------|--------|
+|`/create`|`POST`|Creates a user|<pre>{<br/>  "username": "test",<br/>  "email: "test@example.com"<br/>}</pre>|<pre>{<br/>  "message": "Success",<br/>  "data": ...<br/>}</pre>|
+|`/find`|`POST`|Creates a user|<pre>{<br/>  "username": "test",<br/>  "email: "test@example.com"<br/>}</pre>|<pre>{<br/>  "message": "Success",<br/>  "data": ...<br/>}</pre>* Only one of `username` _or_ `email` is required. |
+
 ## Deployment
 
 This microservice is deployed using [Serverless Framework](https://www.serverless.com/framework/docs), which leverages a [Cloudformation template](https://aws.amazon.com/cloudformation/resources/templates/) to provision cloud resources for supporting this REST API.
