@@ -35,4 +35,4 @@ jobs:
       - name: Serverless Deploy
         env:
           DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
-        run: npx serverless deploy --stage $STAGE --region $REGION --verbose
+        run: npx serverless deploy --stage $STAGE --region $REGION
