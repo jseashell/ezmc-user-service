@@ -1,0 +1,36 @@
+name: Pipeline
+run-name: ${{ github.event.head_commit.message }}
+on: [push]
+
+env:
+  STAGE: main
+  REGION: us-east-1
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+      - name: Install project
+        run: npm ci --silent
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: $REGION
+      - name: Fetch AWS Secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        with:
+          secret-ids: |
+            DB_SECRET, arn:aws:secretsmanager:us-east-1:008908697155:secret:rds!db-72682b05-532f-4ddc-a670-7a9de463e095-iUdFDQ
+          parse-json-secrets: true
+      - name: Serverless Deploy
+        env:
+          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
+        run: npx serverless deploy --stage $STAGE --region $REGION --verbose
