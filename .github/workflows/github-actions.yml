@@ -12,14 +12,6 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-      - name: Install project
-        run: npm ci --silent
-      - name: Generate Prisma Database Client
-        run: npx prisma generate
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -32,7 +24,16 @@ jobs:
           secret-ids: |
             DB_SECRET, arn:aws:secretsmanager:us-east-1:008908697155:secret:rds!db-72682b05-532f-4ddc-a670-7a9de463e095-iUdFDQ
           parse-json-secrets: true
-      - name: Serverless Deploy
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+      - name: Install project
+        run: npm ci --silent
+      - name: Migrate database schema
+        if: github.ref == 'refs/heads/main'
+        run: npx prisma db push
+      - name: Deploy serverless functions
         env:
           DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
         run: npx serverless deploy --stage $STAGE --region $REGION
