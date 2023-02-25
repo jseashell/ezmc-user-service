@@ -6,13 +6,17 @@ import schema from './schema';
 
 const prisma = new PrismaClient();
 
-const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event) => {
+const deleteFunc: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) => {
   return prisma.user
-    .findMany()
-    .then((users) => {
+    .delete({
+      where: {
+        id: event.body.id,
+      },
+    })
+    .then((user) => {
       return formatJsonResponse({
         message: 'Success',
-        data: users,
+        data: user,
       });
     })
     .catch((err) => {
@@ -24,4 +28,4 @@ const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event
     });
 };
 
-export const main = middyfy(findAll);
+export const main = middyfy(deleteFunc);

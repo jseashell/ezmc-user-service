@@ -26,7 +26,10 @@ const create: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) 
     })
     .catch((err) => {
       console.error(err);
-      return formatJsonError(err);
+      return formatJsonError({
+        message: 'Failure',
+        error: err,
+      });
     });
 };
 

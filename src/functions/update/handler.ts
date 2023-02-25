@@ -6,13 +6,23 @@ import schema from './schema';
 
 const prisma = new PrismaClient();
 
-const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event) => {
+const update: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) => {
   return prisma.user
-    .findMany()
-    .then((users) => {
+    .update({
+      where: {
+        id: event.body.id,
+      },
+      data: {
+        firstName: event.body.firstName,
+        lastName: event.body.lastName,
+        phoneNumber: event.body.phoneNumber,
+        locale: event.body.locale,
+      },
+    })
+    .then((user) => {
       return formatJsonResponse({
         message: 'Success',
-        data: users,
+        data: user,
       });
     })
     .catch((err) => {
@@ -24,4 +34,4 @@ const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event
     });
 };
 
-export const main = middyfy(findAll);
+export const main = middyfy(update);

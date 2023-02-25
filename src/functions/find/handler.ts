@@ -6,9 +6,13 @@ import schema from './schema';
 
 const prisma = new PrismaClient();
 
-const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event) => {
+const find: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (event) => {
   return prisma.user
-    .findMany()
+    .findUniqueOrThrow({
+      where: {
+        email: event.body.email,
+      },
+    })
     .then((users) => {
       return formatJsonResponse({
         message: 'Success',
@@ -24,4 +28,4 @@ const findAll: ValidatedEventApiGatewayProxyEvent<typeof schema> = async (_event
     });
 };
 
-export const main = middyfy(findAll);
+export const main = middyfy(find);

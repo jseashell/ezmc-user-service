@@ -1,4 +1,4 @@
-import { create, findAll } from '@functions/index';
+import { create, deleteFunc, find, findAll, update } from '@functions/index';
 import type { AWS } from '@serverless/typescript';
 
 const serverlessConfiguration: AWS = {
@@ -42,7 +42,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { create, findAll },
+  functions: { create, deleteFunc, findAll, find, update },
   package: {
     individually: true,
     patterns: [
