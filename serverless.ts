@@ -54,6 +54,40 @@ const serverlessConfiguration: AWS = {
       '!node_modules/@prisma/engines/**',
     ],
   },
+  resources: {
+    Resources: {
+      RdsDatabase: {
+        Type: 'AWS::RDS::DBInstance',
+        Properties: {
+          AllocatedStorage: '5',
+          DBInstanceClass: 'db.t3.micro',
+          DBInstanceIdentifier: '${self:service}-${self:provider.stage}',
+          DeletionProtection: false,
+          Engine: 'postgres',
+          EngineVersion: '13.7',
+          ManageMasterUserPassword: true,
+          Port: '5432',
+          VPCSecurityGroups: ['${env:AWS_DEFAULT_SECURITY_GROUP}'],
+        },
+      },
+      RdsSecret: {
+        Type: 'AWS::SecretsManager::Secret',
+        Properties: {
+          GenerateSecretString: {
+            SecretStringTemplate: '{"username": "postgres"}',
+            GenerateStringKey: 'password',
+            PasswordLength: 16,
+            ExcludeCharacters: '"@/\\',
+          },
+        },
+      },
+    },
+    Outputs: {
+      RdsSecretId: {
+        Value: '!Ref RdsSecret',
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
