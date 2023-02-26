@@ -33,12 +33,10 @@ jobs:
             DB_SECRET, arn:aws:secretsmanager:us-east-1:008908697155:secret:ezmc-user-service/main/rds-Hl1Hpc
           parse-json-secrets: true
       - if: github.ref == 'refs/heads/main'
-        name: Migrate database schema # requires IAM service role for RDS
+        name: Deploy
         env:
-          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-service-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
-        run: npx prisma migrate deploy
-      - name: Deploy serverless functions # requires AWS access key
-        if: github.ref == 'refs/heads/main'
-        env:
-          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-service-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
-        run: npx serverless deploy --stage $STAGE --region $REGION
+          DB_URL: postgresql://${{ env.DB_SECRET_USERNAME }}:${{ env.DB_SECRET_PASSWORD }}@ezmc-user-service-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
+        run: >-
+          echo $DB_URL
+          npx prisma migrate deploy
+          npx serverless deploy --stage $STAGE --region $REGION
