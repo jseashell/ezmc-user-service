@@ -17,7 +17,11 @@ npm install
 First, setup your environment with the PostgreSQL database URL.
 
 ```sh
-export DB_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+export DB_HOST="localhost:5432"
+export DB_NAME="databaseName"
+export DB_USERNAME="postgres"
+export DB_PASSWORD="password"
+export DB_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}"
 ```
 
 Next, generate the Prisma database client
@@ -42,6 +46,28 @@ curl localhost:3000/main/create \
   -H 'Content-Type: application/json' \
   -d '{"username": "test", "email": "test@example.com"}'
 ```
+
+## Database
+
+This service uses [Prisma](https://prisma.io), a Typescript ORM.
+
+Prisma uses a [schema](../../prisma/schema.prisma) to generate a Node package for client connection and query execution. The PrismaClient is setup in the `postinstall` npm script, so you won't typically notice any different workflow from your typical `npm install`. However, maintaining your local database over time as the schema changes will require that you manually trigger migrations in your local development environment.
+
+Due to the nature of Prisma's schema migration and AWS VPCs, running migrations from CI/CD requires a rather complex pipeline that integrates database secrets, environment variables, and identity access management resources. However, migrations can be triggered for local and remote databases manually.
+
+### Local
+
+To sequentially execute all [migrations](./prisma/migrations) on an existing local database.
+
+1. Ensure your `$DB_URL` is configured for your localhost Postgres database
+1. Run `npx prisma migrate dev`.
+
+## Remote
+
+1. Modify the AWS RDS instance to be public.
+1. Add your dev workstation IP address to the security group ingress rules for the database.
+1. Ensure your `$DB_URL` is configured for your remote Postgres database.
+1. Run `npx prisma migrate deploy`.
 
 ## API
 

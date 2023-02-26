@@ -19,36 +19,27 @@ jobs:
       - name: Install project
         run: npm ci --silent
       - if: github.ref == 'refs/heads/main'
-        name: Configure AWS Credentials
+        name: Configure AWS credentials for
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::008908697155:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS
           aws-region: ${{ env.REGION }}
-      - if: github.ref == 'refs/heads/main'
-        name: Fetch database secret ARN from Cloudformation outputs
-        run: >-
-          echo "::set-output name=RDS_SECRET_ARN::$(
-            aws cloudformation \
-            --region $REGION describe-stacks \
-            --stack-name ezmc-user-service-$STAGE \
-            --query "Stacks[0].Outputs[0].OutputValue"
-          )"
       - if: github.ref == 'refs/heads/main'
         name: Fetch database secret
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: |
-            DB_SECRET, ${{ steps.get-outputs.outputs.RDS_SECRET_ARN }}
+            DB_SECRET, arn:aws:secretsmanager:us-east-1:008908697155:secret:ezmc-user-service/main/rds-Hl1Hpc
           parse-json-secrets: true
-      # - if: github.ref == 'refs/heads/main'
-      #   name: Migrate database schema
-      #   env:
-      #     DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
-      #   run: npx prisma migrate deploy
-      - name: Deploy serverless functions
+      - if: github.ref == 'refs/heads/main'
+        name: Migrate database schema # requires IAM service role for RDS
+        env:
+          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-service-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
+        run: npx prisma migrate deploy
+      - name: Deploy serverless functions # requires AWS access key
         if: github.ref == 'refs/heads/main'
         env:
-          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
-          AWS_DEFAULT_SECURITY_GROUP: ${{ secrets.AWS_DEFAULT_SECURITY_GROUP }}
+          DB_URL: postgresql://$DB_SECRET_USERNAME:$DB_SECRET_PASSWORD@ezmc-user-service-main.c1z3yesb8dwk.us-east-1.rds.amazonaws.com:5432/postgres
         run: npx serverless deploy --stage $STAGE --region $REGION
