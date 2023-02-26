@@ -5,12 +5,12 @@
   "main": "serverless.ts",
   "private": true,
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "npx husky install",
     "postinstall": "npx prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "offline": "serverless offline",
-    "lint": "eslint .",
-    "format": "prettier --write '**/*.{js,ts,yml,yaml,json}' --list-different"
+    "offline": "npx serverless offline",
+    "lint": "npx eslint .",
+    "format": "npx prettier --write '**/*.{js,ts,yml,yaml,json}' --list-different"
   },
   "dependencies": {
     "@middy/core": "^3.4.0",
